@@ -13,7 +13,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         .confetti {
             position: fixed;
@@ -21,6 +23,7 @@
             height: 10px;
             top: -10px;
             animation: fall linear infinite;
+            pointer-events: none;
         }
         @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
         .card-container {
@@ -32,7 +35,7 @@
         .card {
             position: relative;
             width: 100%;
-            min-height: 720px;
+            height: 750px;
             transform-style: preserve-3d;
             transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
@@ -41,11 +44,12 @@
         .card-front, .card-back {
             position: absolute;
             width: 100%;
-            min-height: 720px;
+            height: 100%;
             backface-visibility: hidden;
             border-radius: 20px;
-            padding: 40px;
+            padding: 35px;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         .card-front {
             background: linear-gradient(145deg, #2d2d2d 0%, #1a1a1a 100%);
@@ -93,59 +97,84 @@
         }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         .voucher-header {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #555;
             letter-spacing: 3px;
             text-transform: uppercase;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .voucher-title {
-            font-size: 2.5em;
+            font-size: 2.3em;
             color: #1a1a1a;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             letter-spacing: 8px;
         }
         .voucher-subtitle {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #c4a035;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         .voucher-location {
-            font-size: 1.05em;
+            font-size: 1em;
             color: #333;
             font-weight: normal;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             letter-spacing: 1px;
         }
         .voucher-divider {
             width: 80%;
             height: 2px;
             background: linear-gradient(90deg, transparent, #c4a035, transparent);
-            margin: 15px auto;
+            margin: 12px auto;
         }
         .voucher-details {
-            font-size: 1em;
+            font-size: 0.95em;
             color: #333;
-            line-height: 2.2;
-            margin: 20px 0;
+            line-height: 2;
+            margin: 15px 0;
             text-align: left;
             padding: 0 10px;
         }
         .voucher-details strong {
             color: #1a1a1a;
         }
+        .voucher-amount {
+            font-size: 2em;
+            color: #c4a035;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
         .voucher-message {
             font-style: italic;
             color: #666;
+            font-size: 0.95em;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+        .book-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #c4a035, #d4b045);
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 30px;
             font-size: 1em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-decoration: none;
             margin-top: 20px;
-            line-height: 1.7;
+            box-shadow: 0 4px 15px rgba(196, 160, 53, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .book-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 160, 53, 0.6);
         }
         .porsche-logo-back {
-            margin-top: 25px;
-            font-size: 1.5em;
+            margin-top: 15px;
+            font-size: 1.2em;
             color: #1a1a1a;
             font-weight: bold;
             letter-spacing: 8px;
@@ -153,12 +182,12 @@
         .experience-badge {
             background: #c4a035;
             color: #fff;
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: bold;
             letter-spacing: 2px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .sparkle {
             position: absolute;
@@ -172,16 +201,20 @@
         @media (max-width: 480px) {
             .birthday-text { font-size: 2em; }
             .name-text { font-size: 1.6em; }
-            .voucher-title { font-size: 1.8em; }
-            .card-front, .card-back { padding: 25px; min-height: 620px; }
-            .card { min-height: 620px; }
+            .voucher-title { font-size: 1.6em; }
+            .voucher-amount { font-size: 1.6em; }
+            .card-front, .card-back { padding: 25px; }
+            .card { height: auto; min-height: 600px; }
+            .card-front, .card-back { height: auto; min-height: 600px; position: relative; }
+            .card.flipped .card-front { display: none; }
+            .card:not(.flipped) .card-back { display: none; }
         }
     </style>
 </head>
 <body>
 
 <div class="card-container">
-    <div class="card" id="card" onclick="flipCard()">
+    <div class="card" id="card" onclick="flipCard(event)">
         <!-- FRONT -->
         <div class="card-front">
             <div class="cake-emoji">&#127874;</div>
@@ -198,22 +231,24 @@
         <div class="card-back">
             <div class="voucher-header">&#127873; Gift Voucher</div>
             <div class="voucher-title">PORSCHE</div>
-            <div class="voucher-subtitle">Experience Center</div>
+            <div class="voucher-subtitle">Pilot Experience</div>
             <div class="voucher-location">&#127937; Hockenheimring, Germany</div>
             <div class="voucher-divider"></div>
+            <div class="voucher-amount">&#8364;450</div>
             <div class="voucher-details">
-                &#127950; <strong>What:</strong> Porsche Driving Experience of your choice<br>
-                &#128197; <strong>When:</strong> Any weekend you choose<br>
-                &#127915; <strong>Experience:</strong> You pick &#8212; from track laps to full race simulations<br>
+                &#127950; <strong>What:</strong> Porsche Pilot Experience<br>
+                &#128197; <strong>When:</strong> Any date you choose<br>
+                &#127915; <strong>Your choice:</strong> Pick your car + your experience<br>
                 &#127891; <strong>Includes:</strong> Professional instruction + all equipment
             </div>
             <div class="voucher-divider"></div>
             <div class="voucher-message">
                 "Happy Birthday, Fawzi! &#127881;<br><br>
-                Pick your weekend, pick your experience,<br>
+                Pick your car, pick your date,<br>
                 and go make some memories on the track.<br><br>
                 You deserve it!"
             </div>
+            <a href="https://www.porsche-experiencecenter-hockenheimring.de/de/ihre-erlebnisse/pilot_de_pec.html" target="_blank" class="book-button" onclick="event.stopPropagation();">&#127950; Choose Your Experience</a>
             <div class="porsche-logo-back">P O R S C H E</div>
             <div class="experience-badge">&#127937; HOCKENHEIMRING</div>
         </div>
@@ -221,7 +256,8 @@
 </div>
 
 <script>
-    function flipCard() {
+    function flipCard(event) {
+        if (event.target.closest('.book-button')) return;
         document.getElementById('card').classList.toggle('flipped');
     }
 
